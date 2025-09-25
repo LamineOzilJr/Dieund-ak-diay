@@ -24,6 +24,7 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone_number' => 'required|string|max:20|unique:users',
             'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'role' => 'nullable|string|in:user,admin',
 
         ]);
 
@@ -33,7 +34,13 @@ class AuthController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'phone_number' => $validated['phone_number'],
+            'role' => 'user', // Default to 'user'
         ];
+
+        // Only allow 'admin' role if email is 'Lamzojr72@gmail.com'
+        if ($validated['email'] === 'Lamzojr72@gmail.com' && isset($validated['role']) && $validated['role'] === 'admin') {
+            $data['role'] = 'admin';
+        }
 
         if ($request->hasFile('profile_photo')) {
             $image = $request->file('profile_photo');
@@ -99,6 +106,7 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
             'phone_number' => $validated['phone_number'],
             'profile_photo' => $data['profile_photo'] ?? null,
+            'role' => $data['role'] ?? 'user',
         ]);
 
         return redirect()->route('login')->with('email', $validated['email']);

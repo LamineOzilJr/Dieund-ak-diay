@@ -33,6 +33,13 @@
                     <p class="text-red-500 text-sm">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="mb-4 hidden" id="role-section">
+                <label for="role" class="block text-sm font-medium">Rôle</label>
+                <select name="role" id="role" class="w-full border p-2 rounded">
+                    <option value="user" {{ old('role') == 'user' ? 'selected' : '' }}>User</option>
+                    <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                </select>
+            </div>
             <div class="mb-4">
                 <label for="profile_photo" class="block text-sm font-medium">Photo de profil (facultatif)</label>
                 <input type="file" name="profile_photo" id="profile_photo" class="w-full border p-2 rounded @error('profile_photo') border-red-500 @enderror" accept="image/*">
@@ -54,4 +61,21 @@
             <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">S'inscrire</button>
         </form>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const emailInput = document.getElementById('email');
+            const roleSection = document.getElementById('role-section');
+
+            emailInput.addEventListener('input', function () {
+                if (emailInput.value === 'Lamzojr72@gmail.com') {
+                    roleSection.classList.remove('hidden');
+                } else {
+                    roleSection.classList.add('hidden');
+                }
+            });
+        });
+    </script>
 @endsection
