@@ -12,9 +12,17 @@ class PhotoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Photo::with('user', 'category')
-                      ->where('status', 'approved')
-                      ->orderBy('published_at', 'desc');
+        $query = Photo::with('user', 'category');
+
+        $query->where(function ($q) {
+            $q->where('status', 'approved');
+            if (Auth::check()) {
+                $q->orWhere(function ($sub) {
+                    $sub->where('status', 'pending')
+                        ->where('user_id', Auth::id());
+                });
+            }
+        })->orderBy('published_at', 'desc');
 
         if ($author = $request->input('author')) {
             $query->whereHas('user', function ($q) use ($author) {
@@ -90,29 +98,6 @@ class PhotoController extends Controller
 
         return view('photos.validations', compact('photos'));
     }
-
-    // public function approve(Photo $photo)
-    // {
-    //     if (!Auth::check() || !Auth::user()->isAdmin()) {
-    //         return redirect()->route('home')->with('error', 'Accès non autorisé.');
-    //     }
-
-    //     $photo->update(['status' => 'approved']);
-
-    //     return redirect()->route('photos.validations')->with('success', 'Photo validée avec succès.');
-    // }
-
-    // public function reject(Photo $photo)
-    // {
-    //     if (!Auth::check() || !Auth::user()->isAdmin()) {
-    //         return redirect()->route('home')->with('error', 'Accès non autorisé.');
-    //     }
-
-    //     Storage::disk('public')->delete($photo->image_path);
-    //     $photo->delete();
-
-    //     return redirect()->route('photos.validations')->with('success', 'Photo refusée et supprimée.');
-    // }
 
      public function approve(Photo $photo)
     {
@@ -200,7 +185,7 @@ class PhotoController extends Controller
 
     public function show(Photo $photo)
     {
-        if ($photo->status !== 'approved' && (!Auth::check() || !Auth::user()->isAdmin())) {
+        if ($photo->status !== 'approved' && (!Auth::check() || (!Auth::user()->isAdmin() && $photo->user_id !== Auth::id()))) {
             return redirect()->route('home')->with('error', 'Photo non disponible.');
         }
         return view('photos.show', compact('photo'));
