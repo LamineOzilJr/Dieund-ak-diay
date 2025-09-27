@@ -62,20 +62,20 @@
                     <a href="{{ route('photos.show', $photo) }}">
                         <img src="{{ Storage::url($photo->image_path) }}" alt="{{ $photo->title }}" class="w-full h-64 object-cover rounded">
                     </a>
-                    {{-- @if($photo->user->phone_number)
+                    @if($photo->user->phone_number)
                         <a href="{{ $photo->whatsapp_link }}" target="_blank" class="absolute bottom-2 right-2 bg-white p-2 rounded-full shadow hover:bg-green-100 transition" title="Contacter via WhatsApp">
                             <img src="{{ asset('storage/images/whatsapp.png') }}" alt="WhatsApp" class="w-6 h-6">
                         </a>
-                    @endif --}}
+                    @endif
 
-                     @if($photo->user->phone_number)
+                     {{-- @if($photo->user->phone_number)
                         <a href="{{ $photo->whatsapp_link }}" 
                         target="_blank" 
                         class="absolute bottom-2 right-2 bg-green-500 text-white p-3 rounded-full shadow hover:bg-green-600 transition" 
                         title="Contacter via WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                    @endif
+                    @endif --}}
                 </div>
                 <h3 class="mt-2 font-bold">{{ $photo->title }}</h3>
                 <p class="mt-1">{{ $photo->description }}</p>
